@@ -24,15 +24,34 @@ class SecondViewController: UIViewController {
         }
     }
     
+    deinit {
+        removeObserver()
+    }
+    
     @IBAction func switchToggled(_ sender: UISwitch) {
         if sender.isOn {
             self.view.backgroundColor = .green
             self.titleLbl.text = "Listening"
             secondVCIsListening = true
+            setUpObserver()
         } else {
             self.view.backgroundColor = .darkGray
             self.titleLbl.text = "Not Listening"
             secondVCIsListening = false
+            removeObserver()
         }
+    }
+    
+    
+    func setUpObserver() -> Void {
+        NotificationCenter.default.addObserver(self, selector: #selector(self.handleNotification(_:)), name: .myNotificationName, object: nil)
+    }
+    
+    func removeObserver(){
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    @objc func handleNotification(_ sender: Notification){
+        titleLbl.text = sender.userInfo?["name"] as? String
     }
 }
